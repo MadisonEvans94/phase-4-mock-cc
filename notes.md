@@ -1,0 +1,84 @@
+<!-- TODO: models.py -->
+<!-- [x] make necessary imports -->
+
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import MetaData
+from sqlalchemy.orm import validates
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy_serializer import SerializerMixin
+
+<!-- [x] build all the Classes in models and add __tablename__ properties -->
+<!--
+side note: be sure to use proper notation for the items that require USDC time:
+example:
+    created_at = db.Column(db.DateTime, server_default = db.func.now())
+    updated_at = db.Column(db.DateTime, onupdate = db.func.now())
+ -->
+
+<!-- [x] include SerializerMixin wrapper to each class -->
+
+<!-- [x] add backrefs where needed -->
+<!-- ex: hero_powers = db.relationship('HeroPower', backref = 'hero') -->
+<!-- [ ] add the association proxies -->
+<!-- example:
+
+    ... in the case of the Hero Class ...
+    powers = association_proxy('hero_powers', 'power'),
+
+    where heroe_powers is not the name of a table, but rather the name of the relationship ...
+
+    hero_powers = db.relationship('HeroPower', backref = 'hero')
+
+
+
+ -->
+<!-- [ ] set serialize_rules that exclude the CURRENT instance of the class  -->
+
+<!-- [ ] add validations -->
+<!-- ex:
+
+@validates('description')
+def validates_description(self, key, description):
+    if not description or len(description) < 20:
+        raise ValueError("Strength must have a length")
+    return description
+ -->
+
+<!-- ex:
+... within the HeroPowers class ...
+hero = db.Column(db.Integer, db.ForeignKey('heroes.id'))
+power = db.Column(db.Integer, db.ForeignKey('powers.id'))
+serialize_rules = ('-power.hero_powers', '-hero.hero_powers')
+
+... within the Heroes class ..
+hero_powers = db.relationship('HeroPowers', backref = 'hero')
+powers = association_proxy('hero_powers', 'power')
+serialize_rules = ('-powers.hero', '-hero_powers.hero')
+
+-->
+
+<!-- TODO: app.py -->
+
+<!-- [ ] make necessary imports -->
+
+from flask import Flask, make_response
+from flask_migrate import Migrate
+from flask_restful import Api, Resource
+
+from models import db, <!-- also include any other models here -->
+
+<!-- [ ] make sure initial boiler plate code is in place -->
+
+app = Flask(**name**)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.json.compact = False
+
+migrate = Migrate(app, db)
+
+db.init_app(app)
+
+api = Api(app)
+
+if **name** == '**main**':
+app.run(port=5555, debug=True)
