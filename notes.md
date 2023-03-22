@@ -1,5 +1,5 @@
 <!-- TODO: models.py -->
-<!-- [x] make necessary imports -->
+<!-- [ ] make necessary imports -->
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
@@ -7,19 +7,17 @@ from sqlalchemy.orm import validates
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy_serializer import SerializerMixin
 
-<!-- [x] build all the Classes in models and add __tablename__ properties -->
+<!-- [ ] build all the Classes in models and add __tablename__ properties -->
 <!--
 side note: be sure to use proper notation for the items that require USDC time:
 example:
     created_at = db.Column(db.DateTime, server_default = db.func.now())
     updated_at = db.Column(db.DateTime, onupdate = db.func.now())
  -->
-
-<!-- [x] include SerializerMixin wrapper to each class -->
-
-<!-- [x] add backrefs where needed -->
+<!-- [ ] include SerializerMixin wrapper to each class -->
+<!-- [ ] add backrefs where needed -->
 <!-- ex: hero_powers = db.relationship('HeroPower', backref = 'hero') -->
-<!-- [x] add the association proxies -->
+<!-- [ ] add the association proxies -->
 <!-- example:
 
     ... in the case of the Hero Class ...
@@ -28,12 +26,8 @@ example:
     where heroe_powers is not the name of a table, but rather the name of the relationship ...
 
     hero_powers = db.relationship('HeroPower', backref = 'hero')
-
-
-
  -->
-<!-- [x] set serialize_rules that exclude the CURRENT instance of the class  -->
-
+<!-- [ ] set serialize_rules that exclude the CURRENT instance of the class  -->
 <!-- 
 
 class Hero(db.Model, SerializerMixin):
@@ -64,7 +58,6 @@ serialize_rules = ('-powers.hero', '-hero_powers.hero')
 
 -->
 <!-- [ ] add validations -->
-
 <!-- 
 
 class Power(db.Model, SerializerMixin):
@@ -76,19 +69,18 @@ class Power(db.Model, SerializerMixin):
             raise ValueError("Strength must have a length")
         return description
  -->
-
 <!-- TODO: app.py -->
-
+<!-- [ ] upgrade and migrate -->
+<!-- 
+flask db upgrade (synonymous to makemgirations)
+flask db migrate (synonymous to migrate) 
+ -->
 <!-- [ ] make necessary imports -->
-
 from flask import Flask, make_response, request, jsonify
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
-
 from models import db, <!-- also include any other models here -->
-
 <!-- [ ] make sure initial boiler plate code is in place -->
-
 app = Flask(**name**)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
