@@ -19,7 +19,7 @@ example:
 
 <!-- [x] add backrefs where needed -->
 <!-- ex: hero_powers = db.relationship('HeroPower', backref = 'hero') -->
-<!-- [ ] add the association proxies -->
+<!-- [x] add the association proxies -->
 <!-- example:
 
     ... in the case of the Hero Class ...
@@ -32,18 +32,25 @@ example:
 
 
  -->
-<!-- [ ] set serialize_rules that exclude the CURRENT instance of the class  -->
+<!-- [x] set serialize_rules that exclude the CURRENT instance of the class  -->
 
-<!-- [ ] add validations -->
-<!-- ex:
+<!-- 
 
-@validates('description')
-def validates_description(self, key, description):
-    if not description or len(description) < 20:
-        raise ValueError("Strength must have a length")
-    return description
+class Hero(db.Model, SerializerMixin):
+    # ...
+    serialize_rules = ('-hero_powers.power',)
+
+
+class HeroPower(db.Model, SerializerMixin):
+    # ...
+    serialize_rules = ('-hero', '-power',)
+
+
+class Power(db.Model, SerializerMixin):
+    # ...
+    serialize_rules = ('-hero_powers.hero',)
+
  -->
-
 <!-- ex:
 ... within the HeroPowers class ...
 hero = db.Column(db.Integer, db.ForeignKey('heroes.id'))
@@ -56,12 +63,25 @@ powers = association_proxy('hero_powers', 'power')
 serialize_rules = ('-powers.hero', '-hero_powers.hero')
 
 -->
+<!-- [ ] add validations -->
+
+<!-- 
+
+class Power(db.Model, SerializerMixin):
+   ... 
+
+    @validates('description')
+    def validates_description(self, key, description):
+        if not description or len(description) < 20:
+            raise ValueError("Strength must have a length")
+        return description
+ -->
 
 <!-- TODO: app.py -->
 
 <!-- [ ] make necessary imports -->
 
-from flask import Flask, make_response
+from flask import Flask, make_response, request, jsonify
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
 
@@ -82,3 +102,16 @@ api = Api(app)
 
 if **name** == '**main**':
 app.run(port=5555, debug=True)
+
+<!-- [ ] GET (all) example -->
+<!-- 
+class Hero(Resource):
+    def get(self):
+        heroes = Hero.query.all()
+        heroes_dict = [hero.to_dict() for hero in heroes]
+        response = make_response(
+            jsonify(heroes_dict),
+            200
+        )
+        return response
+-->
